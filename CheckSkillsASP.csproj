@@ -28,9 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="DTOs\" />
     <Folder Include="Extentions\" />
+    <Folder Include="Mapping\" />
   </ItemGroup>
 
 </Project>
