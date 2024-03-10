@@ -10,11 +10,6 @@ namespace CheckSkillsASP.Data
                                                  IdentityRole<int>,
                                                  int>
     {
-        public DataContext()
-        {
-            Database.EnsureDeleted();
-            Database.EnsureCreated();
-        }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
