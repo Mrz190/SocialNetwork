@@ -31,29 +31,26 @@ namespace CheckSkillsASP.Controllers
 
             var user = _mapper.Map<Entity.AppUser>(memberForCreationDto);
 
-            user.UserName = memberForCreationDto.UserName.ToLower();
+            //user.UserName = memberForCreationDto.UserName.ToLower();
 
-            await _userRepository.AddUser(user);
+            //await _userRepository.AddUser(user);
 
-            var userList = await _userRepository.GetUsersAsync();
+            //var userList = await _userRepository.GetUsersAsync();
 
-            await _userRepository.SaveChangesAsync();
+            //await _userRepository.SaveChangesAsync();
 
-            //if (!result.Succeeded) return BadRequest(result.Errors);
+            return Ok();
 
-            //if (!roleResult.Succeeded) return BadRequest(result.Errors);
+            //var resultPoint = _mapper.Map<DTOs.MemberDto>(user);
 
-            var resultPoint = _mapper.Map<DTOs.MemberDto>(user);
-
-
-            return CreatedAtRoute("GetPointOfInterest",
-                new User
-                {
-                    UserName = user.UserName,
-                    City = user.City,
-                    Country = user.Country
-                },
-                resultPoint);
+            //return CreatedAtRoute("GetPointOfInterest",
+            //    new User
+            //    {
+            //        UserName = user.UserName,
+            //        City = user.City,
+            //        Country = user.Country
+            //    },
+            //    resultPoint);
         }
     }
 }
