@@ -12,7 +12,7 @@ namespace CheckSkillsASP.Interfaces
         Task<AppUser> GetUserByNickNameAsync(string nickname);
         Task<AppUser> GetUserByIdAsync(int id);
         Task<bool> UserExist(string username);
-        Task<bool> AddUser(AppUser user);
-        Task<bool> SaveChangesAsync();
+        Task AddUser(AppUser user);
+        Task<bool> SaveAsync();
     }
 }

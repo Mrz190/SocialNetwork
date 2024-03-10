@@ -12,6 +12,8 @@ namespace CheckSkillsASP.Mapping
             Console.WriteLine("Mapping here...");
             CreateMap<DTOs.MemberForCreationDto, Entity.AppUser>();
             CreateMap<Entity.AppUser, DTOs.MemberDto>();
+            CreateMap<Entity.AppUser, DTOs.UserDto>();
+
         }
     }
 }

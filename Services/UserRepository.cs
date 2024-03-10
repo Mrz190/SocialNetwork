@@ -48,7 +48,7 @@ namespace CheckSkillsASP.Services
             return false;
         }
 
-        public async Task<bool> AddUser(AppUser user)
+        public async Task AddUser(AppUser user)
         {
 
             // ХЕРНЯ ЕБАНАЯ
@@ -57,17 +57,16 @@ namespace CheckSkillsASP.Services
 
             if(userList != null)
             {
+                var lastuser = userList.LastOrDefault().Id;
+                user.Id = ++lastuser;
                 userList.Add(user);
-                
-                return (await _context.SaveChangesAsync() >= 0);
             }
-            return false;
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task<bool> SaveAsync()
         {
-            List<AppUser> userList = (List<AppUser>)await GetUsersAsync();
             return (await _context.SaveChangesAsync() >= 0);
+
         }
     }
 }
