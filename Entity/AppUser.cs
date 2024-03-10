@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace CheckSkillsASP.Entity
 {
@@ -9,5 +10,6 @@ namespace CheckSkillsASP.Entity
         public DateTime WasCreated { get; set; }
         public string City { get; set; }
         public string Country { get; set; }
+        public string Password { get; set; }
     }
 }

@@ -58,10 +58,8 @@ namespace CheckSkillsASP.Services
             if(userList != null)
             {
                 userList.Add(user);
-                //return false;
+                
                 return (await _context.SaveChangesAsync() >= 0);
-
-                Console.WriteLine("--------------------\n--------------------\n--------------------\n--------------------");
             }
             return false;
         }

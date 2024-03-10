@@ -1,5 +1,4 @@
-﻿using API.Entities;
-using AutoMapper;
+﻿using AutoMapper;
 using CheckSkillsASP.DTOs;
 using CheckSkillsASP.Entity;
 using CheckSkillsASP.Interfaces;
