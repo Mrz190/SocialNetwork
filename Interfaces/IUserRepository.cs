@@ -1,4 +1,5 @@
 ﻿using CheckSkillsASP.Entity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CheckSkillsASP.Interfaces
 {
@@ -10,5 +11,8 @@ namespace CheckSkillsASP.Interfaces
         Task<IEnumerable<AppUser>> GetUsersByNameAsync(string name);
         Task<AppUser> GetUserByNickNameAsync(string nickname);
         Task<AppUser> GetUserByIdAsync(int id);
+        Task<bool> UserExist(string username);
+        Task<bool> AddUser(AppUser user);
+        Task<bool> SaveChangesAsync();
     }
 }

@@ -1,6 +1,8 @@
 ﻿using CheckSkillsASP.Data;
 using CheckSkillsASP.Entity;
 using CheckSkillsASP.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CheckSkillsASP.Services
@@ -34,6 +36,40 @@ namespace CheckSkillsASP.Services
         {
             var result = await _context.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
             return result;
+        }
+
+        public async Task<bool> UserExist(string username)
+        {
+            var users = _context.Users.Where(u => u.UserName == username);
+            if(users.Count() >= 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> AddUser(AppUser user)
+        {
+
+            // ХЕРНЯ ЕБАНАЯ
+            // НАХУЙ УДАЛИТЬ СОХРЕНЕНИЕ И СЕДАЛТЬ ЧЕРЕЗ ЮЗЕР МЕНЕДЖЕР
+            var userList = (List<AppUser>)await GetUsersAsync();
+
+            if(userList != null)
+            {
+                userList.Add(user);
+                //return false;
+                return (await _context.SaveChangesAsync() >= 0);
+
+                Console.WriteLine("--------------------\n--------------------\n--------------------\n--------------------");
+            }
+            return false;
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            List<AppUser> userList = (List<AppUser>)await GetUsersAsync();
+            return (await _context.SaveChangesAsync() >= 0);
         }
     }
 }

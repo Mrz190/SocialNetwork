@@ -6,7 +6,9 @@ using System.Text.Json;
 
 namespace CheckSkillsASP.Data
 {
-    public class DataContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
+    public class DataContext : IdentityDbContext<AppUser,
+                                                 IdentityRole<int>,
+                                                 int>
     {
         public DataContext()
         {

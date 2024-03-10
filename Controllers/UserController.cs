@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CheckSkillsASP.DTOs;
+using CheckSkillsASP.Entity;
 using CheckSkillsASP.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CheckSkillsASP.Controllers
@@ -27,14 +29,36 @@ namespace CheckSkillsASP.Controllers
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<MemberDto>> GetUserByIdAsync(int id)
         {
-            return "value";
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            if (user == null)
+                return NotFound($"No user with the id {id}");
+
+            return Ok(user);
         }
 
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("nickname/{nickname}", Name = "nickname")]
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsersByNickName(string nickname)
         {
+            var usersList = await _userRepository.GetUserByNickNameAsync(nickname);
+
+            if (usersList == null)
+                return NotFound($"No user with the nickname {nickname}");
+            
+            return Ok(usersList);
+        }
+
+        [HttpGet("name/{name}", Name="name")]
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsersByName(string name)
+        {
+            var usersList = await _userRepository.GetUsersByNameAsync(name);
+
+            if (usersList == null)
+                return NotFound($"No user with the name {name}");
+
+            return Ok(usersList);
         }
 
         [HttpPut("{id}")]
