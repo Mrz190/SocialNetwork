@@ -15,9 +15,9 @@ namespace CheckSkillsASP.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-        private readonly UserManager<AddUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public AccountController(IMapper mapper, IUserRepository userRepository, UserManager<AddUser> userManager)
+        public AccountController(IMapper mapper, IUserRepository userRepository, UserManager<AppUser> userManager)
         {
             _mapper = mapper;
             _userRepository = userRepository;
