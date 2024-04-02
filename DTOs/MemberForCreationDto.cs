@@ -8,6 +8,8 @@ namespace CheckSkillsASP.DTOs
         public string UserName { get; set; }
 
         [Required]
+        [MaxLength(15)]
+        [MinLength(6)]
         public string NickName { get; set; }
 
         [Required]

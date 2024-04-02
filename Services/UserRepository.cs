@@ -38,9 +38,9 @@ namespace CheckSkillsASP.Services
             return result;
         }
 
-        public async Task<bool> UserExist(string username)
+        public async Task<bool> UserExist(string nickname)
         {
-            var users = _context.Users.Where(u => u.UserName == username);
+            var users = _context.Users.Where(u => u.NickName == nickname);
             if(users.Count() >= 1)
             {
                 return true;

@@ -1,6 +1,9 @@
 using CheckSkillsASP.Data;
+using CheckSkillsASP.Entity;
+using CheckSkillsASP.Extensions;
 using CheckSkillsASP.Interfaces;
 using CheckSkillsASP.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -19,6 +22,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddIdentityServices(builder.Configuration);
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -26,7 +31,10 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
 
 var app = builder.Build();
@@ -38,24 +46,28 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
 }
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
+
 app.MapControllers();
 
-//using var scope = app.Services.CreateScope();
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
 
-//var services = scope.ServiceProvider;
-
-//try
-//{
-
-//}
-//catch(Exception ex)
-//{
-//    var logger = services.GetService<ILogger<Program>>();
-//    logger.LogError(ex, "Error While Connecting To Database");
-//}
+try
+{
+    var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+    await context.Database.MigrateAsync();
+}
+catch (Exception ex)
+{
+    var logger = services.GetService<ILogger<Program>>();
+    logger.LogError(ex, "Incorrect migration");
+}
 
 app.Run();

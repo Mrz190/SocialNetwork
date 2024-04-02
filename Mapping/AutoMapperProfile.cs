@@ -8,12 +8,10 @@ namespace CheckSkillsASP.Mapping
     {
         public AutoMapperProfile()
         {
-            Console.Clear();
-            Console.WriteLine("Mapping here...");
-            CreateMap<DTOs.MemberForCreationDto, Entity.AppUser>();
-            CreateMap<Entity.AppUser, DTOs.MemberDto>();
-            CreateMap<Entity.AppUser, DTOs.UserDto>();
-
+            CreateMap<MemberForCreationDto, AppUser>();
+            CreateMap<AppUser, MemberDto>();
+            CreateMap<AppUser, UserDto>();
+            CreateMap<RegDto, AppUser>();
         }
     }
 }
