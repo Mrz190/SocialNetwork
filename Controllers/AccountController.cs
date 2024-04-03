@@ -25,22 +25,56 @@ namespace CheckSkillsASP.Controllers
             _tokenService = tokenService;
         }
 
+        //[HttpPost("reg")]
+        //public async Task<ActionResult<UserDto>> CreateUser(RegDto regDto)
+        //{
+
+        //    if (await _userRepository.UserExist(regDto.NickName)) return BadRequest($"User with nickname {regDto.NickName} is already exists");
+
+        //    var user = _mapper.Map<AppUser>(regDto);
+
+        //    user.UserName = regDto.Username.ToLower();
+
+        //    var result = await _userManager.CreateAsync(user, regDto.Password);
+        //    if (!result.Succeeded) return BadRequest(result.Errors.ToString());
+
+
+        //    var roleUser = await _userManager.AddToRoleAsync(user, "Member");
+        //    if (!roleUser.Succeeded) return BadRequest(roleUser.Errors);
+
+        //    return new UserDto
+        //    {
+        //        UserName = user.UserName,
+        //        Token = await _tokenService.CreateToken(user),
+        //        City = user.City,
+        //        Country = user.Country
+        //    };
+        //}
+
+
+
         [HttpPost("reg")]
         public async Task<ActionResult<UserDto>> CreateUser(RegDto regDto)
         {
-
-            if (await _userRepository.UserExist(regDto.NickName)) return BadRequest($"User with nickname {regDto.NickName} is already exists");
+            if (await _userRepository.UserExist(regDto.NickName))
+                return BadRequest($"User with nickname {regDto.NickName} already exists");
 
             var user = _mapper.Map<AppUser>(regDto);
-
             user.UserName = regDto.Username.ToLower();
 
             var result = await _userManager.CreateAsync(user, regDto.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors.ToString());
+            if (!result.Succeeded)
+                return BadRequest(result.Errors.ToString());
 
-
-            var roleUser = await _userManager.AddToRoleAsync(user, "Member");
-            if (!roleUser.Succeeded) return BadRequest(roleUser.Errors);
+            // Проверяем, существует ли роль "Member"
+            var roleExists = await _userManager.IsInRoleAsync(user, "Member");
+            if (!roleExists)
+            {
+                // Если роль "Member" не существует, добавляем её
+                var roleResult = await _userManager.AddToRoleAsync(user, "Member");
+                if (!roleResult.Succeeded)
+                    return BadRequest(roleResult.Errors.ToString());
+            }
 
             return new UserDto
             {
@@ -50,6 +84,7 @@ namespace CheckSkillsASP.Controllers
                 Country = user.Country
             };
         }
+
 
 
 

@@ -24,17 +24,17 @@ namespace CheckSkillsASP.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            var jsonUsers = File.ReadAllText("Data/UsersSeed.json");
-            var seedUsers = JsonSerializer.Deserialize<List<AppUser>>(jsonUsers);
+            modelBuilder.Entity<AppUser>()
+                .HasMany(ur => ur.UserRoles)
+                .WithOne(u => u.User)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
 
-            foreach (var user in seedUsers)
-            {
-                modelBuilder.Entity<AppUser>().Property(u => u.NickName).HasMaxLength(15).IsRequired();
-                modelBuilder.Entity<AppUser>().Property(u => u.Country).HasMaxLength(256).IsRequired();
-                modelBuilder.Entity<AppUser>().Property(u => u.City).HasMaxLength(256).IsRequired();
-                modelBuilder.Entity<AppUser>().Property(u => u.WasCreated).IsRequired();
-                modelBuilder.Entity<AppUser>().HasData(user);
-            }
+            modelBuilder.Entity<AppRole>()
+                .HasMany(ur => ur.UserRoles)
+                .WithOne(u => u.Role)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
 
         }
     }

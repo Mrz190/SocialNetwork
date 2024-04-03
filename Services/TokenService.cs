@@ -30,10 +30,11 @@ namespace CheckSkillsASP.Services
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r))); 
+            claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r))); // check how it work in debug level
 
-            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
-            var tokenDesctiptor = new SecurityTokenDescriptor
+            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256); // head
+
+            var tokenDesctiptor = new SecurityTokenDescriptor // payload
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(7),

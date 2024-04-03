@@ -34,7 +34,6 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
 
 var app = builder.Build();
@@ -63,6 +62,7 @@ try
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
+    await Seed.SeedUsers(userManager, roleManager);
 }
 catch (Exception ex)
 {
