@@ -37,7 +37,7 @@ namespace CheckSkillsASP.Services
             var tokenDesctiptor = new SecurityTokenDescriptor // payload
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddDays(10),
                 SigningCredentials = creds
             };
 

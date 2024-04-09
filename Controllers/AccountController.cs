@@ -8,9 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CheckSkillsASP.Controllers
 {
-    [Route("")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseController
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
@@ -24,34 +22,6 @@ namespace CheckSkillsASP.Controllers
             _userManager = userManager;
             _tokenService = tokenService;
         }
-
-        //[HttpPost("reg")]
-        //public async Task<ActionResult<UserDto>> CreateUser(RegDto regDto)
-        //{
-
-        //    if (await _userRepository.UserExist(regDto.NickName)) return BadRequest($"User with nickname {regDto.NickName} is already exists");
-
-        //    var user = _mapper.Map<AppUser>(regDto);
-
-        //    user.UserName = regDto.Username.ToLower();
-
-        //    var result = await _userManager.CreateAsync(user, regDto.Password);
-        //    if (!result.Succeeded) return BadRequest(result.Errors.ToString());
-
-
-        //    var roleUser = await _userManager.AddToRoleAsync(user, "Member");
-        //    if (!roleUser.Succeeded) return BadRequest(roleUser.Errors);
-
-        //    return new UserDto
-        //    {
-        //        UserName = user.UserName,
-        //        Token = await _tokenService.CreateToken(user),
-        //        City = user.City,
-        //        Country = user.Country
-        //    };
-        //}
-
-
 
         [HttpPost("reg")]
         public async Task<ActionResult<UserDto>> CreateUser(RegDto regDto)
@@ -76,12 +46,15 @@ namespace CheckSkillsASP.Controllers
                     return BadRequest(roleResult.Errors.ToString());
             }
 
+            //user.IsActive = true;
+
             return new UserDto
             {
                 UserName = user.UserName,
                 Token = await _tokenService.CreateToken(user),
                 City = user.City,
-                Country = user.Country
+                Country = user.Country,
+                IsActive = true
             };
         }
 
@@ -92,9 +65,9 @@ namespace CheckSkillsASP.Controllers
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await _userManager.Users
-                                         .SingleOrDefaultAsync(i => i.UserName == loginDto.UserName);
+                                         .SingleOrDefaultAsync(i => i.NickName == loginDto.NickName);
 
-            if (user == null) return BadRequest("Invalid login/password.");
+            if (user == null) return BadRequest("Invalid nickname/password.");
 
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
 
@@ -103,10 +76,24 @@ namespace CheckSkillsASP.Controllers
             return new UserDto
             {
                 UserName = user.UserName,
+                NickName = user.NickName,
                 Token = await _tokenService.CreateToken(user),
                 City = user.City,
                 Country = user.Country
             };
+        }
+
+        [HttpDelete("DropAll")]
+        public async Task<ActionResult> DeleteAll()
+        {
+            var users = await _userManager.Users.ToListAsync();
+
+            foreach (var user in users)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+
+            return Ok("Users was successfully deactivated!");
         }
     }
 }

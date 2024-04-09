@@ -1,155 +1,155 @@
 [
   {
-    "Id": 1,
     "UserName": "JohnDoe",
     "NickName": "Johnny",
     "WasCreated": "2024-03-03T12:00:00",
     "City": "New York",
     "Country": "USA",
-    "Email": "johndoe@example.com"
+    "Email": "johndoe@example.com",
+    "IsActive": true
   },
   {
-    "Id": 2,
     "UserName": "AliceSmith",
     "NickName": "AliSmith",
     "WasCreated": "2024-03-03T12:05:00",
     "City": "London",
     "Country": "UK",
-    "Email": "alicesmith@example.com"
+    "Email": "alicesmith@example.com",
+    "IsActive": true
   },
   {
-    "Id": 3,
     "UserName": "CarlosGomez",
     "NickName": "GomezC",
     "WasCreated": "2024-03-03T12:10:00",
     "City": "Madrid",
     "Country": "Spain",
-    "Email": "carlosgomez@example.com"
+    "Email": "carlosgomez@example.com",
+    "IsActive": true
   },
   {
-    "Id": 4,
     "UserName": "YukiSato",
     "NickName": "YukiSan",
     "WasCreated": "2024-03-03T12:15:00",
     "City": "Tokyo",
     "Country": "Japan",
-    "Email": "yukisato@example.com"
+    "Email": "yukisato@example.com",
+    "IsActive": true
   },
   {
-    "Id": 5,
     "UserName": "ElenaKovac",
     "NickName": "Lena",
     "WasCreated": "2024-03-03T12:20:00",
     "City": "Prague",
     "Country": "Czech Republic",
-    "Email": "elenakovac@example.com"
+    "Email": "elenakovac@example.com",
+    "IsActive": true
   },
   {
-    "Id": 6,
     "UserName": "MohammedAli",
     "NickName": "TheGreatest",
     "WasCreated": "2024-03-03T12:25:00",
     "City": "Cairo",
     "Country": "Egypt",
-    "Email": "mohammedali@example.com"
+    "Email": "mohammedali@example.com",
+    "IsActive": true
   },
   {
-    "Id": 7,
     "UserName": "SophieMiller",
     "NickName": "SophieM",
     "WasCreated": "2024-03-03T12:30:00",
     "City": "Paris",
     "Country": "France",
-    "Email": "sophiemiller@example.com"
+    "Email": "sophiemiller@example.com",
+    "IsActive": true
   },
   {
-    "Id": 8,
     "UserName": "RajPatel",
     "NickName": "RajP",
     "WasCreated": "2024-03-03T12:35:00",
     "City": "Mumbai",
     "Country": "India",
-    "Email": "rajpatel@example.com"
+    "Email": "rajpatel@example.com",
+    "IsActive": true
   },
   {
-    "Id": 9,
     "UserName": "LuisaFernandez",
     "NickName": "LuisaF",
     "WasCreated": "2024-03-03T12:40:00",
     "City": "Buenos Aires",
     "Country": "Argentina",
-    "Email": "luisafernandez@example.com"
+    "Email": "luisafernandez@example.com",
+    "IsActive": true
   },
   {
-    "Id": 10,
     "UserName": "KenjiTanaka",
     "NickName": "KTanaka",
     "WasCreated": "2024-03-03T12:45:00",
     "City": "Osaka",
     "Country": "Japan",
-    "Email": "kenjitanaka@example.com"
+    "Email": "kenjitanaka@example.com",
+    "IsActive": true
   },
   {
-    "Id": 11,
     "UserName": "AnastasiaIvanova",
     "NickName": "AnaIvanova",
     "WasCreated": "2024-03-03T12:50:00",
     "City": "Moscow",
     "Country": "Russia",
-    "Email": "anastasiaivanova@example.com"
+    "Email": "anastasiaivanova@example.com",
+    "IsActive": true
   },
   {
-    "Id": 12,
     "UserName": "AntonioLopez",
     "NickName": "TonyLopez",
     "WasCreated": "2024-03-03T12:55:00",
     "City": "Barcelona",
     "Country": "Spain",
-    "Email": "antoniolopez@example.com"
+    "Email": "antoniolopez@example.com",
+    "IsActive": true
   },
   {
-    "Id": 13,
     "UserName": "PriyaVerma",
     "NickName": "PriyaV",
     "WasCreated": "2024-03-03T13:00:00",
     "City": "Delhi",
     "Country": "India",
-    "Email": "priyaverma@example.com"
+    "Email": "priyaverma@example.com",
+    "IsActive": true
   },
   {
-    "Id": 14,
     "UserName": "JavierRodriguez",
     "NickName": "JaviRod",
     "WasCreated": "2024-03-03T13:05:00",
     "City": "Buenos Aires",
     "Country": "Argentina",
-    "Email": "javierrodriguez@example.com"
+    "Email": "javierrodriguez@example.com",
+    "IsActive": true
   },
   {
-    "Id": 15,
     "UserName": "EmilyJohnson",
     "NickName": "EmJ",
     "WasCreated": "2024-03-03T13:10:00",
     "City": "Sydney",
     "Country": "Australia",
-    "Email": "emilyjohnson@example.com"
+    "Email": "emilyjohnson@example.com",
+    "IsActive": true
   },
   {
-    "Id": 16,
     "UserName": "IvanIvanov",
     "NickName": "IvanI",
     "WasCreated": "2024-03-03T13:15:00",
     "City": "Sofia",
     "Country": "Bulgaria",
-    "Email": "ivanivanov@example.com"
+    "Email": "ivanivanov@example.com",
+    "IsActive": true
   },
   {
-    "Id": 17,
     "UserName": "SofiaMartinez",
     "NickName": "SofiaM",
     "WasCreated": "2024-03-03T13:20:00",
     "City": "Mexico City",
     "Country": "Mexico",
-    "Email": "sofiamartinez@example.com"
+    "Email": "sofiamartinez@example.com",
+    "IsActive": true
   }
 ]

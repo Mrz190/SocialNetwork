@@ -1,7 +1,6 @@
-﻿using CheckSkillsASP.Entity;
-using CheckSkillsASP.Migrations;
+﻿using AutoMapper;
+using CheckSkillsASP.Entity;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace CheckSkillsASP.Data
@@ -11,28 +10,56 @@ namespace CheckSkillsASP.Data
 
         public static async Task SeedUsers(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
-            var jsonUsers = File.ReadAllText("Data/UsersSeed.json");
-            var seedUsers = JsonSerializer.Deserialize<List<AppUser>>(jsonUsers);
-
-            var roles = new List<AppRole>
+            try
             {
-                new AppRole {Name = "Member"},
-                new AppRole {Name = "Admin"},
-                new AppRole {Name = "Moderator"}
 
-            };
+                string jsonUsers = File.ReadAllText("Data/UsersSeed.json");
+                var seedUsers = JsonSerializer.Deserialize<List<AppUser>>(jsonUsers);
+                 
 
-            foreach (var role in roles)
-            {
-                await roleManager.CreateAsync(role);
+                var roles = new List<AppRole>
+                {
+                    new AppRole {Name = "Member"},
+                    new AppRole {Name = "Admin"},
+                    new AppRole {Name = "Moderator"}
+                };
+
+                foreach (var role in roles)
+                {
+                    var roleExists = await roleManager.RoleExistsAsync(role.Name);
+                    if (!roleExists)
+                        await roleManager.CreateAsync(role);
+                }
+
+                foreach (var user in seedUsers)
+                {
+                    var existingUser = await userManager.FindByNameAsync(user.UserName);
+                    if (existingUser == null)
+                    {
+                        user.UserName = user.UserName.ToLower();
+                        var result = await userManager.CreateAsync(user, "Pass_1234");
+                        if (result.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(user, "Member");
+                        }
+                        else
+                        {
+                            foreach (var error in result.Errors)
+                            {
+                                Console.WriteLine($"Error creating user: {error.Description}");
+                            }
+                        }
+                    }
+                }
+
+                Console.WriteLine("User seeding completed successfully.");
             }
-
-            foreach (var user in seedUsers)
+            catch (Exception ex)
             {
-                user.UserName = user.UserName.ToLower();
-                await userManager.CreateAsync(user, "Pass1234");
-                await userManager.CreateAsync(user, "Member");
+                Console.WriteLine($"An error occurred during user seeding: {ex.Message}");
+                throw;
             }
         }
+
     }
 }

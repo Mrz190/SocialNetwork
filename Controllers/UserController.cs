@@ -2,24 +2,28 @@
 using CheckSkillsASP.DTOs;
 using CheckSkillsASP.Entity;
 using CheckSkillsASP.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Validations;
 
 namespace CheckSkillsASP.Controllers
 {
-    [Route("users")]
-    [ApiController]
-    public class UserController : ControllerBase
+    [Route("usersController")]
+    public class UserController : BaseController
     {
         private readonly ILogger<UserController> _logger;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
 
-        public UserController(ILogger<UserController> logger, IUserRepository userRepository, IMapper mapper)
+        public UserController(ILogger<UserController> logger, IUserRepository userRepository, IMapper mapper, UserManager<AppUser> userManager)
         {
             _logger = logger;
             _userRepository = userRepository;
             _mapper = mapper;
+            _userManager = userManager;
         }
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
@@ -28,29 +32,18 @@ namespace CheckSkillsASP.Controllers
             return Ok(usersList);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MemberDto>> GetUserByIdAsync(int id)
-        {
-            var user = await _userRepository.GetUserByIdAsync(id);
-
-            if (user == null)
-                return NotFound($"No user with the id {id}");
-
-            return Ok(user);
-        }
-
-        [HttpGet("nickname/{nickname}", Name = "nickname")]
+        [HttpGet("{nickname}", Name = "nickname")]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsersByNickName(string nickname)
         {
             var usersList = await _userRepository.GetUserByNickNameAsync(nickname);
 
             if (usersList == null)
                 return NotFound($"No user with the nickname {nickname}");
-            
+
             return Ok(usersList);
         }
 
-        [HttpGet("name/{name}", Name="name")]
+        [HttpGet("name/{name}", Name = "name")]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsersByName(string name)
         {
             var usersList = await _userRepository.GetUsersByNameAsync(name);
@@ -66,9 +59,26 @@ namespace CheckSkillsASP.Controllers
         {
         }
 
+
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteUser(int id, string acceptedPassword)
         {
-        }
+            var user = _userRepository.GetUserByIdAsync(id);
+            
+            if (user == null)
+            {
+                 return BadRequest($"User with id {id} cannot be found");
+            }
+
+            //if(!await _userManager.CheckPasswordAsync(user.Result, acceptedPassword))
+            //{
+            //    return BadRequest("Password is not valid");
+            //}
+
+            var result = await _userManager.DeleteAsync(user.Result);
+
+            return Ok($"Acccount was deactivated");
+            }
     }
 }
