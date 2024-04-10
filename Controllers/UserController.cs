@@ -2,11 +2,9 @@
 using CheckSkillsASP.DTOs;
 using CheckSkillsASP.Entity;
 using CheckSkillsASP.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Validations;
 
 namespace CheckSkillsASP.Controllers
 {
@@ -60,25 +58,6 @@ namespace CheckSkillsASP.Controllers
         }
 
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id, string acceptedPassword)
-        {
-            var user = _userRepository.GetUserByIdAsync(id);
-            
-            if (user == null)
-            {
-                 return BadRequest($"User with id {id} cannot be found");
-            }
-
-            //if(!await _userManager.CheckPasswordAsync(user.Result, acceptedPassword))
-            //{
-            //    return BadRequest("Password is not valid");
-            //}
-
-            var result = await _userManager.DeleteAsync(user.Result);
-
-            return Ok($"Acccount was deactivated");
-            }
+        
     }
 }

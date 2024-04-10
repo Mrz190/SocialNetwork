@@ -2,6 +2,7 @@
 using CheckSkillsASP.DTOs;
 using CheckSkillsASP.Entity;
 using CheckSkillsASP.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ namespace CheckSkillsASP.Controllers
         [HttpPost("reg")]
         public async Task<ActionResult<UserDto>> CreateUser(RegDto regDto)
         {
-            if (await _userRepository.UserExist(regDto.NickName))
+             if (await _userRepository.UserExist(regDto.NickName))
                 return BadRequest($"User with nickname {regDto.NickName} already exists");
 
             var user = _mapper.Map<AppUser>(regDto);
@@ -83,7 +84,7 @@ namespace CheckSkillsASP.Controllers
             };
         }
 
-        [HttpDelete("DropAll")]
+        [HttpDelete("DropThemAll")]
         public async Task<ActionResult> DeleteAll()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -94,6 +95,27 @@ namespace CheckSkillsASP.Controllers
             }
 
             return Ok("Users was successfully deactivated!");
+        }
+
+        [Authorize ]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<UserDto>> DeleteUser(int id, string acceptedPassword)
+        {
+            var user = _userRepository.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                return BadRequest($"User with id {id} cannot be found");
+            }
+
+            //if(!await _userManager.CheckPasswordAsync(user.Result, acceptedPassword))
+            //{
+            //    return BadRequest("Password is not valid");
+            //}
+
+            var result = await _userManager.DeleteAsync(user.Result);
+
+            return Ok($"Account was deactivated");
         }
     }
 }

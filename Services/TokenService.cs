@@ -27,12 +27,11 @@ namespace CheckSkillsASP.Services
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.NickName)
             };
 
-
             var roles = await _userManager.GetRolesAsync(user);
 
             claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r))); // check how it work in debug level
 
-            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256); // head
+            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature); // head
 
             var tokenDesctiptor = new SecurityTokenDescriptor // payload
             {
