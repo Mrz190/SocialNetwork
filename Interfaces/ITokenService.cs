@@ -1,4 +1,5 @@
 ﻿using CheckSkillsASP.Entity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CheckSkillsASP.Interfaces
 {

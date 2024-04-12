@@ -29,21 +29,19 @@ namespace CheckSkillsASP.Services
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r))); // check how it work in debug level
+            claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
-            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature); // head
+            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
 
-            var tokenDesctiptor = new SecurityTokenDescriptor // payload
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(10),
+                Expires = DateTime.UtcNow.AddDays(10), // Используем UTC для консистентности
                 SigningCredentials = creds
             };
 
-
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            var token = tokenHandler.CreateToken(tokenDesctiptor);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
         }

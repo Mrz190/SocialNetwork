@@ -15,13 +15,16 @@ namespace CheckSkillsASP.Controllers
         private readonly IUserRepository _userRepository;
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly IConfiguration _config;
 
-        public AccountController(IMapper mapper, IUserRepository userRepository, UserManager<AppUser> userManager, ITokenService tokenService)
+
+        public AccountController(IMapper mapper, IUserRepository userRepository, UserManager<AppUser> userManager, ITokenService tokenService, IConfiguration config)
         {
             _mapper = mapper;
             _userRepository = userRepository;
             _userManager = userManager;
             _tokenService = tokenService;
+            _config = config;
         }
 
         [HttpPost("reg")]
@@ -37,11 +40,9 @@ namespace CheckSkillsASP.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors.ToString());
 
-            // Проверяем, существует ли роль "Member"
             var roleExists = await _userManager.IsInRoleAsync(user, "Member");
             if (!roleExists)
             {
-                // Если роль "Member" не существует, добавляем её
                 var roleResult = await _userManager.AddToRoleAsync(user, "Member");
                 if (!roleResult.Succeeded)
                     return BadRequest(roleResult.Errors.ToString());
@@ -97,7 +98,7 @@ namespace CheckSkillsASP.Controllers
             return Ok("Users was successfully deactivated!");
         }
 
-        [Authorize ]
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserDto>> DeleteUser(int id, string acceptedPassword)
         {
@@ -116,6 +117,18 @@ namespace CheckSkillsASP.Controllers
             var result = await _userManager.DeleteAsync(user.Result);
 
             return Ok($"Account was deactivated");
+        }
+
+
+        [HttpGet("checking")]
+        public async Task<IActionResult> CheckingJWT(string JWT_key)
+        {
+            var _validate = new ValidateToken();
+
+            bool checkJWT = _validate.ValidateToken_(JWT_key);
+            if (checkJWT == true) return Ok("Yeap");
+
+            return BadRequest("Nope");
         }
     }
 }

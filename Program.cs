@@ -3,9 +3,15 @@ using CheckSkillsASP.Entity;
 using CheckSkillsASP.Extensions;
 using CheckSkillsASP.Interfaces;
 using CheckSkillsASP.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Net;
+using System.Text;
 
 //Logging with Serilog
 Log.Logger = new LoggerConfiguration()
@@ -27,8 +33,7 @@ builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
+});   
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
