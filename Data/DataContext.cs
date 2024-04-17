@@ -30,6 +30,14 @@ namespace CheckSkillsASP.Data
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
 
+            modelBuilder.Entity<AppUser>()
+            .HasIndex(u => u.NickName)
+            .IsUnique();
+
+
+            modelBuilder.Entity<AppUser>()
+            .Property(p => p.NickName).IsRequired();
+
             modelBuilder.Entity<AppRole>()
                 .HasMany(ur => ur.UserRoles)
                 .WithOne(u => u.Role)

@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace CheckSkillsASP.Controllers
 {
+    [Route("account")]
     public class AccountController : BaseController
     {
         private readonly IMapper _mapper;
@@ -30,34 +32,38 @@ namespace CheckSkillsASP.Controllers
         [HttpPost("reg")]
         public async Task<ActionResult<UserDto>> CreateUser(RegDto regDto)
         {
-             if (await _userRepository.UserExist(regDto.NickName))
-                return BadRequest($"User with nickname {regDto.NickName} already exists");
-
-            var user = _mapper.Map<AppUser>(regDto);
-            user.UserName = regDto.Username.ToLower();
-
-            var result = await _userManager.CreateAsync(user, regDto.Password);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors.ToString());
-
-            var roleExists = await _userManager.IsInRoleAsync(user, "Member");
-            if (!roleExists)
+            try
             {
-                var roleResult = await _userManager.AddToRoleAsync(user, "Member");
-                if (!roleResult.Succeeded)
-                    return BadRequest(roleResult.Errors.ToString());
+                if (await _userRepository.UserExist(regDto.NickName)) return BadRequest($"User with nickname {regDto.NickName} already exists");
+
+                var user = _mapper.Map<AppUser>(regDto);
+                user.UserName = regDto.Username.ToLower();
+
+                user.IsActive = true;
+
+                var result = await _userManager.CreateAsync(user, regDto.Password);
+                if (!result.Succeeded) throw new Exception();
+
+                var roleExists = await _userManager.IsInRoleAsync(user, "Member");
+                if (!roleExists)
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, "Member");
+                    if (!roleResult.Succeeded) throw new Exception();
+                }
+
+                return new UserDto
+                {
+                    UserName = user.UserName,
+                    Token = await _tokenService.CreateToken(user),
+                    City = user.City,
+                    Country = user.Country,
+                    IsActive = true
+                };
             }
-
-            //user.IsActive = true;
-
-            return new UserDto
+            catch (Exception ex)
             {
-                UserName = user.UserName,
-                Token = await _tokenService.CreateToken(user),
-                City = user.City,
-                Country = user.Country,
-                IsActive = true
-            };
+                return BadRequest("Error while trying to create new user");
+            }
         }
 
 
@@ -99,36 +105,47 @@ namespace CheckSkillsASP.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<UserDto>> DeleteUser(int id, string acceptedPassword)
+        [HttpDelete("delete")]
+        public async Task<ActionResult<UserDto>> DeleteUser(string acceptedPassword)
         {
-            var user = _userRepository.GetUserByIdAsync(id);
-
-            if (user == null)
+            try
             {
-                return BadRequest($"User with id {id} cannot be found");
+                // Retrieve the JWT token from the request
+                var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                // Decode the JWT token to access the payload
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+                // Access the payload data (claims) from the token
+                var userId = Int32.Parse(jsonToken.Claims.First(claim => claim.Type == "nameid").Value);
+                var nickName = jsonToken.Claims.First(claim => claim.Type == "unique_name").Value;
+
+                nickName = "deactivated_" + nickName;
+
+                var user = _userRepository.GetUserByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return BadRequest($"User with id {userId} cannot be found");
+                }
+
+                if (!await _userManager.CheckPasswordAsync(user.Result, acceptedPassword))
+                {
+                    return BadRequest("Password is not valid");
+                }
+
+                user.Result.IsActive = false;
+                user.Result.NickName = nickName;
+
+                await _userManager.UpdateAsync(user.Result);
+
+                return Ok($"Account was deactivated");
             }
-
-            //if(!await _userManager.CheckPasswordAsync(user.Result, acceptedPassword))
-            //{
-            //    return BadRequest("Password is not valid");
-            //}
-
-            var result = await _userManager.DeleteAsync(user.Result);
-
-            return Ok($"Account was deactivated");
-        }
-
-
-        [HttpGet("checking")]
-        public async Task<IActionResult> CheckingJWT(string JWT_key)
-        {
-            var _validate = new ValidateToken();
-
-            bool checkJWT = _validate.ValidateToken_(JWT_key);
-            if (checkJWT == true) return Ok("Yeap");
-
-            return BadRequest("Nope");
+            catch
+            {
+                return BadRequest("Something was wrong while deleting account.");
+            }
         }
     }
 }

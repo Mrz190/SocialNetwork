@@ -12,6 +12,8 @@ namespace CheckSkillsASP.Mapping
             CreateMap<AppUser, MemberDto>();
             CreateMap<AppUser, UserDto>();
             CreateMap<RegDto, AppUser>();
+            CreateMap<UserForUpdatingDto, AppUser>();
+            CreateMap<AppUser, UserForUpdatingDto>();
         }
     }
 }

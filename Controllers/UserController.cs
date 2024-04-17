@@ -4,10 +4,13 @@ using CheckSkillsASP.Entity;
 using CheckSkillsASP.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CheckSkillsASP.Controllers
 {
+    [Authorize]
     [Route("usersController")]
     public class UserController : BaseController
     {
@@ -52,12 +55,40 @@ namespace CheckSkillsASP.Controllers
             return Ok(usersList);
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> ParticalyUpdateUser(int id, JsonPatchDocument<UserForUpdatingDto> updateDto)
         {
+            try
+            {
+                var user = await _userManager.Users.SingleOrDefaultAsync(i => i.Id.ToString() == id.ToString());
+                if (user == null) throw new Exception("User not found");
+
+                var userToPatch = _mapper.Map<UserForUpdatingDto>(user);
+                updateDto.ApplyTo(userToPatch, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        Console.WriteLine(error.ErrorMessage);
+                    }
+                    return BadRequest("-------");
+                }
+
+                // Применить изменения к пользователю
+                _mapper.Map(userToPatch, user);
+
+                // Сохранить изменения в базе данных
+                await _userManager.UpdateAsync(user);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Something went wrong while processing the request: {ex.Message}");
+            }
+
         }
-
-
-        
     }
 }

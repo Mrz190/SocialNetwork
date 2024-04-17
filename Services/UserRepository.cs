@@ -15,7 +15,7 @@ namespace CheckSkillsASP.Services
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
-            var result = await _context.Users.OrderBy(i => i.Id).ToListAsync();
+            var result = await _context.Users.OrderBy(i => i.Id).Where( i => i.IsActive == true).ToListAsync();
 
             return result;
         }
@@ -33,7 +33,7 @@ namespace CheckSkillsASP.Services
 
         public async Task<AppUser> GetUserByIdAsync(int id)
         {
-            var result = await _context.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
+            var result = await _context.Users.Where(i => i.Id == id && i.IsActive == true).FirstOrDefaultAsync();
             return result;
         }
 

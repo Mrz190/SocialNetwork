@@ -1,0 +1,16 @@
+[
+  {
+    "operationType": 0,
+    "path": "string",
+    "op": "replace",
+    "from": "/city",
+    "value": "New York"
+  },
+  {
+    "operationType": 0,
+    "path": "string",
+    "op": "replace",
+    "from": "/country",
+    "value": "USA"
+  }
+]
