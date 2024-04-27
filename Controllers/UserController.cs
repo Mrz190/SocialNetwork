@@ -16,27 +16,30 @@ namespace CheckSkillsASP.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork; // edited
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
 
-        public UserController(ILogger<UserController> logger, IUserRepository userRepository, IMapper mapper, UserManager<AppUser> userManager)
+        public UserController(ILogger<UserController> logger, IUserRepository userRepository, IMapper mapper, UserManager<AppUser> userManager, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _userRepository = userRepository;
             _mapper = mapper;
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
         }
+
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
-            var usersList = await _userRepository.GetUsersAsync();
+            var usersList = await _unitOfWork.UserRepository.GetUsersAsync();
             return Ok(usersList);
         }
 
         [HttpGet("{nickname}", Name = "nickname")]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsersByNickName(string nickname)
         {
-            var usersList = await _userRepository.GetUserByNickNameAsync(nickname);
+            var usersList = await _unitOfWork.UserRepository.GetUserByNickNameAsync(nickname);
 
             if (usersList == null)
                 return NotFound($"No user with the nickname {nickname}");
@@ -47,7 +50,7 @@ namespace CheckSkillsASP.Controllers
         [HttpGet("name/{name}", Name = "name")]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsersByName(string name)
         {
-            var usersList = await _userRepository.GetUsersByNameAsync(name);
+            var usersList = await _unitOfWork.UserRepository.GetUsersByNameAsync(name);
 
             if (usersList == null)
                 return NotFound($"No user with the name {name}");

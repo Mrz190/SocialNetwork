@@ -123,28 +123,61 @@ namespace CheckSkillsASP.Controllers
 
                 nickName = "deactivated_" + nickName;
 
-                var user = _userRepository.GetUserByIdAsync(userId);
+                var user = await _userRepository.GetUserByIdAsync(userId);
 
                 if (user == null)
                 {
-                    return BadRequest($"User with id {userId} cannot be found");
+                    throw new Exception();
                 }
 
-                if (!await _userManager.CheckPasswordAsync(user.Result, acceptedPassword))
+                if (!await _userManager.CheckPasswordAsync(user, acceptedPassword))
                 {
                     return BadRequest("Password is not valid");
                 }
 
-                user.Result.IsActive = false;
-                user.Result.NickName = nickName;
+                user.IsActive = false;
+                user.NickName = nickName;
 
-                await _userManager.UpdateAsync(user.Result);
+                await _userManager.UpdateAsync(user);
 
                 return Ok($"Account was deactivated");
             }
             catch
             {
-                return BadRequest("Something was wrong while deleting account.");
+                return BadRequest("Something was happend while proccessing your request :(");
+            }
+        }
+
+        [HttpPut("editNickName")]
+        public async Task<IActionResult> EditNickName(string newNickname)
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+                var userId = Int32.Parse(jsonToken.Claims.First(claim => claim.Type == "nameid").Value);
+
+                var user = await _userRepository.GetUserByIdAsync(userId);
+
+                if (user == null)
+                {
+                    throw new Exception();
+                }
+
+                bool isValidNick = await _userRepository.CheckNickName(newNickname);
+
+                if (isValidNick == false) throw new Exception();
+
+                user.NickName = newNickname;
+
+                await _userManager.UpdateAsync(user);
+
+                return Ok("Your nickname was successfully updated.");
+            }
+            catch
+            {
+                return BadRequest("Something was happend while proccessing your request :(");
             }
         }
     }

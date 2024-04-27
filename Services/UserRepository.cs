@@ -1,4 +1,5 @@
-﻿using CheckSkillsASP.Data;
+﻿using AutoMapper;
+using CheckSkillsASP.Data;
 using CheckSkillsASP.Entity;
 using CheckSkillsASP.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace CheckSkillsASP.Services
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
-            var result = await _context.Users.OrderBy(i => i.Id).Where( i => i.IsActive == true).ToListAsync();
+            var result = await _context.Users.OrderBy(i => i.UserName).Where( i => i.IsActive == true).ToListAsync();
 
             return result;
         }
@@ -51,6 +52,15 @@ namespace CheckSkillsASP.Services
         { 
             return (await _context.SaveChangesAsync() >= 0);
 
+        }
+
+        public async Task<bool> CheckNickName(string checkString)
+        {
+            var isValidNick = await _context.Users.Where(i => i.NickName == checkString).FirstOrDefaultAsync();
+
+            if (isValidNick == null) return true;
+
+            return false;
         }
     }
 }
